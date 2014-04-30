@@ -33,16 +33,16 @@ public class Util {
     public static<T> CompletableFuture<T> holdDownExceptionally(CompletableFuture<T>f, CountDownLatch latch) {
         return f.exceptionally((t) -> {
             try {
-                latch.await();
+                latch.countDown();latch.await();
             } catch (Exception e) {
                 throw new RuntimeException(t);
             }
             throw new RuntimeException(t);
-        }).thenApply((r) -> {latch.countDown();return r;});
+        }).thenApply((r) -> {latch.countDown();latch.countDown();return r;});
     }
 
     public static <T,U> CompletableFuture<U> myApplytoEither(CompletableFuture<T> f1, CompletableFuture<T> f2,Function<? super T, U> fn)  {
-        CountDownLatch sync = new CountDownLatch(1);
+        CountDownLatch sync = new CountDownLatch(2);
         CompletableFuture<T> f1be = holdDownExceptionally(f1,sync);
         CompletableFuture<T> f2be = holdDownExceptionally(f2,sync);
         return f1be.applyToEither(f2be,fn);

@@ -21,6 +21,7 @@ public class ApplyToEitherWithExceptions {
         CompletableFuture<Integer> f1 = supplyAsync(
                 () -> {
                     sleep(2200);
+                    if (false) throw new RuntimeException();
                     System.out.println("done f1");
                     return 42;
                 }
@@ -28,7 +29,7 @@ public class ApplyToEitherWithExceptions {
         CompletableFuture<Integer> f2 = supplyAsync(
                 () -> {
                     sleep(2100);
-                    if (true) throw new RuntimeException();
+                    if (false) throw new RuntimeException();
                     return 43;
                 });
 
