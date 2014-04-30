@@ -1,7 +1,9 @@
 package com.performize.compfut;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -27,5 +29,22 @@ public class Util {
             }
         });
         return brighterFuture;
+    }
+    public static<T> CompletableFuture<T> holdDownExceptionally(CompletableFuture<T>f, CountDownLatch latch) {
+        return f.exceptionally((t) -> {
+            try {
+                latch.await();
+            } catch (Exception e) {
+                throw new RuntimeException(t);
+            }
+            throw new RuntimeException(t);
+        }).thenApply((r) -> {latch.countDown();return r;});
+    }
+
+    public static <T,U> CompletableFuture<U> myApplytoEither(CompletableFuture<T> f1, CompletableFuture<T> f2,Function<? super T, U> fn)  {
+        CountDownLatch sync = new CountDownLatch(1);
+        CompletableFuture<T> f1be = holdDownExceptionally(f1,sync);
+        CompletableFuture<T> f2be = holdDownExceptionally(f2,sync);
+        return f1be.applyToEither(f2be,fn);
     }
 }

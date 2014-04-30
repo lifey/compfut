@@ -11,7 +11,7 @@ import static com.performize.compfut.Util.*;
  * Created by life on 29/4/14.
  */
 public class CompletableFutureExample {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) {
         CompletableFuture<Integer> f = supplyAsync(
                 () -> {sleep(10000);if (false) throw new RuntimeException();return 42;}
         );
@@ -20,6 +20,6 @@ public class CompletableFutureExample {
             System.out.println("completed" + r);});
         System.out.println(f.getNumberOfDependents());
 
-        System.out.println(f2.get());
+        System.out.println(f2.join());
     }
 }

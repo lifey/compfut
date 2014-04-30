@@ -26,7 +26,7 @@ public class CompletableFutureWithLambda {
                 map(docFuture -> docFuture.thenCompose(this::calculateRelevance)).
                 collect(Collectors.<CompletableFuture<Double>>toList());
 
-        relevanceFutures.stream().reduce();
+        //relevanceFutures.stream().reduce();
 
     }
     public static void main(String[] args) {
